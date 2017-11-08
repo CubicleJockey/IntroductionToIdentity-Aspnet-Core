@@ -59,7 +59,7 @@ namespace IntroToIdentity.AspnetCore.Example.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
             if (result.Succeeded)
             {
                 logger.LogInformation("User logged in.");
@@ -79,8 +79,6 @@ namespace IntroToIdentity.AspnetCore.Example.Controllers
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return View(model);
-
-            // If we got this far, something failed, redisplay form
         }
 
         /// <exception cref="ApplicationException">Unable to load two-factor authentication user.</exception>
@@ -90,7 +88,6 @@ namespace IntroToIdentity.AspnetCore.Example.Controllers
         {
             // Ensure the user has gone through the username & password screen first
             var user = await signInManager.GetTwoFactorAuthenticationUserAsync();
-
             if (user == null)
             {
                 throw new ApplicationException("Unable to load two-factor authentication user.");
@@ -158,6 +155,8 @@ namespace IntroToIdentity.AspnetCore.Example.Controllers
         }
 
         /// <exception cref="ApplicationException">Unable to load two-factor authentication user.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="oldValue">oldValue</paramref> is null.</exception>
+        /// <exception cref="ArgumentException"><paramref name="oldValue">oldValue</paramref> is the empty string ("").</exception>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -171,7 +170,7 @@ namespace IntroToIdentity.AspnetCore.Example.Controllers
                 throw new ApplicationException("Unable to load two-factor authentication user.");
             }
 
-            var recoveryCode = model.RecoveryCode.Replace(" ", string.Empty);
+            var recoveryCode = model?.RecoveryCode?.Replace(" ", string.Empty);
 
             var result = await signInManager.TwoFactorRecoveryCodeSignInAsync(recoveryCode);
 
@@ -240,6 +239,7 @@ namespace IntroToIdentity.AspnetCore.Example.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            //NOTE: The SignOutAsync method clears the user's claims stored in a cookie.
             await signInManager.SignOutAsync();
             logger.LogInformation("User logged out.");
             return RedirectToAction(nameof(HomeController.Index), "Home");
