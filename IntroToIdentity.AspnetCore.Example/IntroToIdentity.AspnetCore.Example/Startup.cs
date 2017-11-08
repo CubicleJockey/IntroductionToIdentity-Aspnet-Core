@@ -1,4 +1,5 @@
-﻿using IntroToIdentity.AspnetCore.Example.Data;
+﻿using System;
+using IntroToIdentity.AspnetCore.Example.Data;
 using IntroToIdentity.AspnetCore.Example.Models;
 using IntroToIdentity.AspnetCore.Example.Services;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,9 @@ namespace IntroToIdentity.AspnetCore.Example
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            ConfigureIdentityOptions(services);
+            ConfigureApplicationCookies(services);
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
@@ -60,5 +64,54 @@ namespace IntroToIdentity.AspnetCore.Example
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
+        #region Helper Methods
+
+        private static void ConfigureIdentityOptions(IServiceCollection services)
+        {
+            services.Configure<IdentityOptions>(options =>
+            {
+                #region Password Settings
+
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 6;
+
+                #endregion Password Settings
+
+                #region Lockout settings
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+                options.Lockout.AllowedForNewUsers = true;
+
+                #endregion Lockout settings
+
+                #region  User settings
+
+                options.User.RequireUniqueEmail = true;
+
+                #endregion  User settings
+            });
+        }
+
+        private static void ConfigureApplicationCookies(IServiceCollection services)
+        {
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.Cookie.Expiration = TimeSpan.FromDays(150);
+                options.LoginPath = "/Account/Login"; // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
+                options.LogoutPath = "/Account/Logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Account/Logout
+                options.AccessDeniedPath = "/Account/AccessDenied"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Account/AccessDenied
+                options.SlidingExpiration = true;
+            });
+        }
+
+        #endregion Helper Methods
     }
 }
