@@ -2,6 +2,7 @@
 using IntroToIdentity.AspnetCore.Example.Data;
 using IntroToIdentity.AspnetCore.Example.Models;
 using IntroToIdentity.AspnetCore.Example.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -81,7 +82,7 @@ namespace IntroToIdentity.AspnetCore.Example
 
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = false;
                 options.Password.RequiredUniqueChars = 6;
@@ -101,6 +102,13 @@ namespace IntroToIdentity.AspnetCore.Example
                 options.User.RequireUniqueEmail = true;
 
                 #endregion  User settings
+
+                #region Signin Settings
+
+                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+
+                #endregion Signin Settings
             });
         }
 
@@ -110,12 +118,15 @@ namespace IntroToIdentity.AspnetCore.Example
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
+                options.Cookie.Name = "TutorialCookieOfAwesome";
                 options.Cookie.HttpOnly = true;
                 options.Cookie.Expiration = TimeSpan.FromDays(150);
                 options.LoginPath = $"/{CONTROLLER}/Login"; // If the LoginPath is not set here, ASP.NET Core will default to /Account/Login
                 options.LogoutPath = $"/{CONTROLLER}/Logout"; // If the LogoutPath is not set here, ASP.NET Core will default to /Account/Logout
                 options.AccessDeniedPath = $"/{CONTROLLER}/AccessDenied"; // If the AccessDeniedPath is not set here, ASP.NET Core will default to /Account/AccessDenied
                 options.SlidingExpiration = true;
+
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
             });
         }
 
