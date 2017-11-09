@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Security;
+using IntroToIdentity.AspnetCore.Example.Configurations;
+using IntroToIdentity.AspnetCore.Example.Constants;
 using IntroToIdentity.AspnetCore.Example.Data;
 using IntroToIdentity.AspnetCore.Example.Models;
 using IntroToIdentity.AspnetCore.Example.Services;
@@ -25,10 +28,21 @@ namespace IntroToIdentity.AspnetCore.Example
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <param name="services">Service Collection</param>
+        /// <exception cref="SecurityException">The caller does not have the required permission to perform this operation.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="variable">variable</paramref> is null.</exception>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            {
+                if (EnvironmentVariables.GetDatabase == AppSettingsConstants.SqlServer)
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString(AppSettingsConstants.DefaultSqlServerConnection));
+                }
+                else
+                {
+                    options.UseNpgsql(Configuration.GetConnectionString(AppSettingsConstants.DefaultPostgressConnection));
+                }
+            });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

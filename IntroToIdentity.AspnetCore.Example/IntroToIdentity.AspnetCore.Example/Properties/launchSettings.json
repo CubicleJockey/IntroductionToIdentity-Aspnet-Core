@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "SqlServer": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Database": "SqlServer"
+      },
+      "applicationUrl": "http://localhost:57420/"
+    },
+    "Postgres": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Database": "Postgres"
+      },
+      "applicationUrl": "http://localhost:57420/"
+    }
+  }
+}

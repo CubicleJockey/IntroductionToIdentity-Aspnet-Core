@@ -20,7 +20,9 @@ namespace IntroToIdentity.AspnetCore.Example.Services
         /// <exception cref="ArgumentException">Cannot be empty.</exception>
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            const string ERRORMESSAGE = "Cannot be empty.";
+            return Task.CompletedTask;
+
+            /*const string ERRORMESSAGE = "Cannot be empty.";
             if(string.IsNullOrWhiteSpace(email)) { throw new ArgumentException(ERRORMESSAGE, nameof(email)); }
             if(string.IsNullOrWhiteSpace(subject)) { throw new ArgumentException(ERRORMESSAGE, nameof(subject)); }
             if(string.IsNullOrWhiteSpace(message)) { throw new ArgumentException(ERRORMESSAGE, nameof(message)); }
@@ -43,6 +45,7 @@ namespace IntroToIdentity.AspnetCore.Example.Services
                 client.Send(mailMessage);
             }
             return Task.CompletedTask;
+            */
         }
     }
 }
