@@ -206,6 +206,8 @@ namespace IntroToIdentity.AspnetCore.Example.Controllers
             return View();
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="value">value</paramref> is null.</exception>
+        /// <exception cref="ArgumentException">The <see cref="M:System.Text.Encodings.Web.TextEncoder.TryEncodeUnicodeScalar(System.Int32,System.Char*,System.Int32,System.Int32@)"></see> method failed. The encoder does not implement <see cref="P:System.Text.Encodings.Web.TextEncoder.MaxOutputCharactersPerInputCharacter"></see> correctly.</exception>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]

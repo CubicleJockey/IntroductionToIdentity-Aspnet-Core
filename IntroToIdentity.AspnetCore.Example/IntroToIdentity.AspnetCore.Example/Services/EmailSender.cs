@@ -25,17 +25,17 @@ namespace IntroToIdentity.AspnetCore.Example.Services
             if(string.IsNullOrWhiteSpace(subject)) { throw new ArgumentException(ERRORMESSAGE, nameof(subject)); }
             if(string.IsNullOrWhiteSpace(message)) { throw new ArgumentException(ERRORMESSAGE, nameof(message)); }
 
-            var client = new SmtpClient(@"localhost\localSMTP")
+            var client = new SmtpClient(@"testing.com")
             {
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("localSMTP", "PoopyPants")
+                Credentials = new NetworkCredential("sender", "poop")
             };
 
             using (client)
             {
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("sender@localSMTP.com"),
+                    From = new MailAddress("sender@testing.com"),
                     Subject = subject,
                     Body = message
                 };
